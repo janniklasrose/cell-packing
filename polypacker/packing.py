@@ -21,10 +21,28 @@ class PolyPacker:
     def add_polygons(self, polygons):
         """Add polygons to the packer.
         Provide polygons in absolute coordinates.
+        The polygons are a list of containing any combination of the following:
+            - instances of shapely.geometry.Polygon objects,
+            - objects with .vertices property OR method that returns xy data, or
+            - xy data (a sequence of (x,y) pairs)
         """
+        # process different data types
+        polys = []
+        for poly in polygons:
+            if not isinstance(poly, Polygon):
+                vert = getattr(poly, 'vertices', None)  # check if it has .vertices
+                if vert:
+                    if callable(vert):  # .vertices is a method
+                        xy = vert()
+                    else:  # .vertices is a property
+                        xy = vert
+                else:  # no attribute .vertices, so we assume it is plain xy data
+                    xy = poly
+                poly = Polygon(xy)  # construct the Polygon object
+            polys.append(poly)
         # split representation of each polygon into local polygon (shape) and center (position)
-        centers = [midpoint(p) for p in polygons]
-        _polygons = [translate(p, -x0, -y0) for p, (x0, y0) in zip(polygons, centers)]
+        centers = [midpoint(p) for p in polys]
+        _polygons = [translate(p, -x0, -y0) for p, (x0, y0) in zip(polys, centers)]
         self.centers = np.append(self.centers, centers, axis=0)
         self._polygons = np.append(self._polygons, _polygons)
         self.update_state()  # set internal state _minimum_distance, _indices
