@@ -1,1 +1,1 @@
-from .vtk import write_polygons
+from .vtk import read_polygons, write_polygons
