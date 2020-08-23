@@ -3,9 +3,17 @@ from abc import ABC, abstractmethod
 
 class UI(ABC):
 
+    # ============================== #
+    #              INIT              #
+    # ============================== #
+
     def __init__(self, ITER_max, ITER_upd=1):
         self.ITER_max = ITER_max  # positive integer
         self.ITER_upd = ITER_upd  # positive integer, cannot be zero (set to inf instead!)
+
+    @abstractmethod
+    def init(self):
+        pass
 
     # ============================== #
     #              STOP              #

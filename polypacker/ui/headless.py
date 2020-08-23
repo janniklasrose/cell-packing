@@ -6,8 +6,7 @@ from .ui import UI, UI_Action, update_needed
 
 class CLI(UI):
 
-    def __init__(self, ITER_max, ITER_upd=1):
-        super().__init__(ITER_max, ITER_upd)
+    def init(self, *args, **kwargs):
         self._STOP = CLI_StopAction()
 
     # ============================== #
@@ -26,7 +25,7 @@ class CLI(UI):
     def UPDATE(self):
         return None
 
-    def _do_update(self, ITER, polygons=None, density=None, collisions=None, *, header_every=5, fillchar='-'):
+    def _do_update(self, ITER, polygons=None, density=None, collisions=None, *, header_every=20, fillchar='-'):
         # progress
         L = math.floor(math.log10(self.ITER_max))+1  # number of digits for ITER
         fmt = 'ITER: %'+str(L)+'d of %'+str(L)+'d = %5.1f%%'
