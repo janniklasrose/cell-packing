@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
 from .ui import UI, UI_Action, update_needed
-from ..visualize import plot_polygon
+from ..visualize import plot_polygon, update_patch
 
 class GUI(UI):
 
@@ -50,13 +50,14 @@ class GUI(UI):
             face = poly.color if hasattr(poly, 'color') else color
             return plot_polygon(poly, axis=axis, facecolor=face)
         ax = axes['poly']
-        self._region = plot_poly(region, regioncolor, ax) if region else None
+        self._region = plot_poly(region, regioncolor, ax) if region is not None else None
         self._patches = [plot_poly(p, polygonscolor, ax) for p in polygons]
 
         # plot line data (hidden due to nan value)
         empty_nan = np.full(self.ITER_max, np.nan)
-        self._density = axes['dens'].plot(empty_nan, 'r.-')[0]
-        self._collisions = axes['coll'].plot(empty_nan, 'b.-')[0]
+        # need to .copy() the data, otherwise plot data is linked
+        self._density = axes['dens'].plot(empty_nan.copy(), 'r.-')[0]
+        self._collisions = axes['coll'].plot(empty_nan.copy(), 'b.-')[0]
 
         # create axes for buttons at [left, bottom, width, height]
         h, w = 0.05, 0.09
@@ -95,8 +96,7 @@ class GUI(UI):
         # polygons
         if polygons is not None:
             for patch, poly in zip(self._patches, polygons):
-                xy = list(map(list, zip(*poly.exterior.xy)))  # transpose
-                patch.set_xy(xy)
+                update_patch(patch, poly)
 
         # density & collisions (latter needs to update the limits dynamically)
         def update_line(i, line, new, relim_ax=None):

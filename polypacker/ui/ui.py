@@ -43,7 +43,7 @@ class UI(ABC):
         return None  # default None = always False
 
     def needs_update(self, ITER, **kwargs):
-        if self.UPDATE is None:
+        if self.UPDATE is None or self.was_stopped:
             UPDATE = False
         else:
             UPDATE = self.UPDATE.is_active

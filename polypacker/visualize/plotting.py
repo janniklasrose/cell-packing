@@ -16,3 +16,10 @@ def plot_polygons(polygons, axis=None, **kwargs):
     xyxy = [coord for polygon in polygons for coord in polygon.exterior.xy]
     p = (axis if axis is not None else plt.gca()).fill(*xyxy, **kwargs)
     return p
+
+
+def update_patch(patch, polygon):
+    """Update a polygon patch with new coordinates."""
+    xy = list(map(list, zip(*polygon.exterior.xy)))  # transpose
+    patch.set_xy(xy)
+    return patch
