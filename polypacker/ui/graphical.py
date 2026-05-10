@@ -34,7 +34,7 @@ class GUI(UI):
         # density for convergence
         axes['dens'].set_title('density')
         axes['dens'].set_xlabel('iteration #')
-        axes['dens'].set_ylabel('density (%)')
+        axes['dens'].set_ylabel('ECV')
         axes['dens'].set_xlim([0, max(self.ITER_max, 2)-1])
         axes['dens'].set_ylim([0, 1])
 
