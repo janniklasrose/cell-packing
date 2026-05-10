@@ -30,7 +30,7 @@ def update(packer, region):
     collisions = np.sum(intersections[:-1])  # last one is self, so omit it
 
     # density
-    density = overlap(polys, region, rel_abs='rel')
+    density = overlap(polygons, region, rel_abs='rel')
 
     # return
     return polygons, density, collisions
