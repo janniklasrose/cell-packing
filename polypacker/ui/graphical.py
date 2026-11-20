@@ -11,11 +11,16 @@ class GUI(UI):
     #              INIT              #
     # ============================== #
 
-    def init(self, polygons, region=None, *, polygonscolor='tab:blue', regioncolor='tab:red', **kwargs):
+    def init(self, polygons, region=None, *, polygonscolor='tab:blue', regioncolor='tab:red',
+             target_density=None, **kwargs):
 
         # create the figure and subplots
         fig, axs = plt.subplots(ncols=3, nrows=2)
-        fig.canvas.set_window_title(kwargs.pop('window_title', ''))
+        window_title = kwargs.pop('window_title', '')
+        if hasattr(fig.canvas, 'set_window_title'):
+            fig.canvas.set_window_title(window_title)
+        elif fig.canvas.manager is not None and hasattr(fig.canvas.manager, 'set_window_title'):
+            fig.canvas.manager.set_window_title(window_title)
 
         # create one large subplot from smaller ones
         grid = axs[0, 0].get_gridspec()  # get grid from top left reference
@@ -37,6 +42,10 @@ class GUI(UI):
         axes['dens'].set_ylabel('density (%)')
         axes['dens'].set_xlim([0, max(self.ITER_max, 2)-1])
         axes['dens'].set_ylim([0, 1])
+        if target_density is not None:
+            if not 0 <= target_density <= 1:
+                raise ValueError("target_density must be between 0 and 1")
+            axes['dens'].axhline(target_density, color='k', linestyle='--', linewidth=1)
 
         # number of collisions
         axes['coll'].set_title('collisions')
